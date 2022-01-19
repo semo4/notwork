@@ -2,13 +2,13 @@ import os
 import inquirer
 
 
-class Choices:
+class Choices():
     def choices(self):
         os.system('color 0A')
         questions = [
             inquirer.List('answer',
                           message="What artifacts do you need?",
-                          choices=['Browser', 'Memory', 'Extra Browser', 'Videos', 'Exit'],
+                          choices=['Browser Artifacts', 'Memory Artifacts', 'Extra History', 'Exit'],
                           ),
         ]
         answers = inquirer.prompt(questions)
@@ -19,7 +19,7 @@ class Choices:
         questions = [
             inquirer.List('answer',
                           message="What Type of Browsing do You Need?",
-                          choices=['browsing history', 'passwords', 'emails', 'Exit'],
+                          choices=['Browser History View', 'Back'],
                           ),
         ]
         answers = inquirer.prompt(questions)
@@ -30,7 +30,7 @@ class Choices:
         questions = [
             inquirer.List('answer',
                           message="What Type of Memory do You Need?",
-                          choices=['cached images', 'memory key finds', 'Exit'],
+                          choices=['Memory Acquisition', 'Memory Key Finds', 'Back'],
                           ),
         ]
         answers = inquirer.prompt(questions)
@@ -41,7 +41,7 @@ class Choices:
         questions = [
             inquirer.List('answer',
                           message="What Type of Browsing do You Need?",
-                          choices=['profiles', 'history', 'fingerprint', 'downloads', 'export', 'filter', 'Exit'],
+                          choices=['profiles', 'history', 'fingerprint', 'downloads', 'export', 'Exit'],
                           ),
         ]
         answers = inquirer.prompt(questions)
@@ -52,7 +52,7 @@ class Choices:
         questions = [
             inquirer.List('answer',
                           message="What Type of Memory do You Need?",
-                          choices=['facebook', 'twitter', 'tiktok', 'all', 'Exit'],
+                          choices=['facebook', 'twitter', 'tiktok', 'all', 'Back'],
                           ),
         ]
         answers = inquirer.prompt(questions)
