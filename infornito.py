@@ -42,17 +42,6 @@ from libs.general import copyDirectory
 __version__ = 1.5
 
 
-def banner():
-    print('''
-  _______     __       _____     __          
- / ___/ /__  / /  ___ / ___/_ __/ /  ___ ____
-/ (_ / / _ \/ _ \/ -_) /__/ // / _ \/ -_) __/
-\___/_/\___/_.__/\__/\___/\_, /_.__/\__/_/   
-                         /___/               
-            < Infornito v{} >
-'''.format(__version__))
-
-
 templates_path = os.path.join(os.getcwd(), 'templates')
 default_export_path = './exports'
 browser_modules = {
@@ -367,7 +356,7 @@ def arg_profiles(args):
 
     for profile in browser_profile_list:
         print('\t{} => {} ({})'.format(profile[0], profile[2], profile[1]))
-    print('\nUsage : infornito.py history --profile {ProfileID}')
+
 
 
 def arg_downloads(args):
@@ -419,8 +408,6 @@ def arg_downloads(args):
     print('\n----------------- Summary ----------------')
     print('[#] Total downloads : {}'.format(len(downloads)))
 
-
-banner()
 
 parser = argparse.ArgumentParser(description='Browser forensic tool')
 parser.add_argument('-v', '--version', action='version',

@@ -44,7 +44,7 @@ class ChromePassword:
             # generate cipher
             cipher = AES.new(encryption_key, AES.MODE_GCM, iv)
 
-            # decrypt password
+            # decrypt login_data
             return cipher.decrypt(password)[:-16].decode()
         except:
 

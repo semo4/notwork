@@ -1,0 +1,4 @@
+mprof run app.py
+mprof plot
+
+python -m app

@@ -1,123 +1,153 @@
 from handler.intro import Banner
 from handler.clear_console import ClearConsole
 from handler.choices import Choices
-from handler.history import BrowserHistory
 from handler.memory import Memory
-from videos.video import VideoCache
 from handler.helper import DomainHelper
+from handler.password import Password
+from handler.search_word import SearchWord
+from handler.date import DateHelper
 import os
 import sys
+import keyboard
 import time
-import subprocess
 
 
 def main():
-    no_error = open(os.devnull, 'w')
     clear_console: ClearConsole = ClearConsole()
     banner: Banner = Banner()
     choices: Choices = Choices()
     memory: Memory = Memory()
-    video: VideoCache = VideoCache()
-    browser: BrowserHistory = BrowserHistory()
     helper: DomainHelper = DomainHelper()
+    password: Password = Password()
+    search: SearchWord = SearchWord()
+    consumed: DateHelper = DateHelper()
     sys.stdout.flush()
     os.system('color 0A')
     display_once = False
     while True:
         clear_console.clearConsole()
         os.system('color 0A')
-        banner.banner()
-        if not display_once:
-            if clear_console.yesno():
-                memory.mem_scrape()
-                display_once = True
-        choice = choices.choices()
-        if choice == 'Browser Artifacts':
-            print("here you can choice one of browser process")
-            sub_choice = choices.browser_choices()
-            if sub_choice == 'Browser History View':
-                print("here we show you the browsing history ")
-                browser.get_browser_history()
-            # if sub_choice == 'passwords':
-            #     print("here we show you the results of the passwords")
-            #     time.sleep(5)
-            #     browser.password()
-            #     clear_console.yesno()
-            # if sub_choice == 'emails':
-            #     print("here we show you the Emails ")
-            #     time.sleep(5)
-            if sub_choice == 'Back':
-                print("bye bye ")
-                continue
-            continue
 
+        if not display_once:
+            banner.banner()
+            display_once = True
+        choice = choices.choices()
         if choice == 'Memory Artifacts':
+            start_time = time.time()
             print("here you can choice one of Memory process")
             memory_sub_choice = choices.memory_choices()
+
             if memory_sub_choice == 'Memory Acquisition':
                 print("here we show you the cached images ")
-                time.sleep(5)
+                memory.mem_scrape()
+                consumed_time = consumed.consumed_time(start_time)
+                print(f"Memory Artifacts/Memory Acquisition finished Successfully, Total time execution {consumed_time}")
+                print('space was pressed, continuing...')
+                keyboard.wait('space')
+
             if memory_sub_choice == 'Memory Key Finds':
                 print("here we show you the results of the keyFinds")
-                time.sleep(5)
+                word = input("put word to search??")
+                result = search.main(word)
+                if result:
+                    search.read_data(word)
+                else:
+                    print("there is No data Found for this KeyWord")
+                consumed_time = consumed.consumed_time(start_time)
+                print(
+                    f"Memory Artifacts/Memory Key Finds :: finished Successfully, Total time execution {consumed_time}")
+                print('space was pressed, continuing...')
+                keyboard.wait('space')
             if memory_sub_choice == 'Back':
                 print("bye bye ")
                 continue
             continue
 
-        if choice == 'Extra History':
+        if choice == 'Browser Artifacts':
             print("here you can choice one of browser process")
+            profiles = helper.get_profiles()
+            profile_choice = choices.choices_profiles(profiles)
+            profile_index = profiles.index(profile_choice)
             sub_choice = choices.extra_browser_choices()
-            # if sub_choice == 'profiles':
-            #     print("here we show you the browsing profiles ")
-            #     subprocess.call('python infornito.py profiles', stderr=no_error)
             if sub_choice == 'history':
+                start_time = time.time()
                 domain = choices.social_media_domain()
                 if domain == 'facebook':
-                    filter_domain = helper.get_filter_domain('facebook.com')
+                    filter_domain = helper.get_filter_domain('facebook.com', profile_index + 1, 'facebook')
                     print("here we show you the results of the facebook")
-                    subprocess.call(filter_domain, stderr=no_error)
+                    helper.call_process(filter_domain)
+                    consumed_time = consumed.consumed_time(start_time)
+                    print(
+                        f"Browser Artifacts/history/facebook :: finished Successfully, Total time execution {consumed_time}")
+                    print('space was pressed, continuing...')
+                    keyboard.wait('space')
                 if domain == 'twitter':
-                    filter_domain = helper.get_filter_domain('twitter.com')
+                    filter_domain = helper.get_filter_domain('twitter.com', profile_index + 1, 'twitter')
                     print("here we show you the twitter ")
-                    subprocess.call(filter_domain, stderr=no_error)
+                    helper.call_process(filter_domain)
+                    consumed_time = consumed.consumed_time(start_time)
+                    print(
+                        f"Browser Artifacts/history/twitter :: finished Successfully, Total time execution {consumed_time}")
+                    print('space was pressed, continuing...')
+                    keyboard.wait('space')
                 if domain == 'tiktok':
-                    filter_domain = helper.get_filter_domain('tiktok.com')
+                    filter_domain = helper.get_filter_domain('tiktok.com', profile_index + 1, 'tiktok')
                     print("here we show you the tiktok ")
-                    subprocess.call(filter_domain, stderr=no_error)
+                    helper.call_process(filter_domain)
+                    consumed_time = consumed.consumed_time(start_time)
+                    print(
+                        f"Browser Artifacts/history/tiktok :: finished Successfully, Total time execution {consumed_time}")
+                    print('space was pressed, continuing...')
+                    keyboard.wait('space')
                 if domain == 'all':
-                    filter_domain = helper.get_filter_domain('all')
-                    print("here we show you the all domains ")
-                    subprocess.call(filter_domain, stderr=no_error)
+                    filter_domain = helper.get_filter_domain('all', profile_index + 1)
+                    print("here we show you the all domains")
+                    helper.call_process(filter_domain)
+                    consumed_time = consumed.consumed_time(start_time)
+                    print(
+
+                        f"Browser Artifacts/history/all :: finished Successfully, Total time execution {consumed_time}")
+                    print('space was pressed, continuing...')
+                    keyboard.wait('space')
                 if sub_choice == 'Back':
                     print("bye bye ")
                     continue
-            # if sub_choice == 'history':
-            #     print("here we show you the results of the history")
-            #     subprocess.call('python infornito.py history --profile 2', stderr=no_error)
-            if sub_choice == 'fingerprint':
-                print("here we show you the fingerprint ")
-                subprocess.call('python infornito.py fingerprint --profile 2', stderr=no_error)
             if sub_choice == 'downloads':
+                start_time = time.time()
                 print("here we show you the downloads ")
-                subprocess.call('python infornito.py downloads --profile 2', stderr=no_error)
-            if sub_choice == 'export':
-                print("here we show you the export ")
-                subprocess.call('python infornito.py export --profile 2', stderr=no_error)
-
+                commend = f'python infornito.py downloads --profile {profile_index + 1}'
+                helper.call_download_process(commend, 'browser/downloads')
+                consumed_time = consumed.consumed_time(start_time)
+                print(
+                    f"Browser Artifacts/downloads :: finished Successfully, Total time execution {consumed_time}")
+                print('space was pressed, continuing...')
+                keyboard.wait('space')
+            if sub_choice == 'fingerprint':
+                start_time = time.time()
+                print("here we show you the fingerprint ")
+                commend = f'python infornito.py fingerprint --profile {profile_index + 1}'
+                helper.call_download_process(commend, 'browser/fingerprint')
+                consumed_time = consumed.consumed_time(start_time)
+                print(
+                    f"Browser Artifacts/fingerprint :: finished Successfully, Total time execution {consumed_time}")
+                print('space was pressed, continuing...')
+                keyboard.wait('space')
+            if sub_choice == 'login data':
+                start_time = time.time()
+                print("here we show you the results of the passwords")
+                password.main(f'Profile {profile_index + 1}')
+                consumed_time = consumed.consumed_time(start_time)
+                print(
+                    f"Browser Artifacts/Login Data :: finished Successfully, Total time execution {consumed_time}")
+                print('space was pressed, continuing...')
+                keyboard.wait('space')
+                clear_console.yesno()
             if sub_choice == 'Back':
                 print("bye bye ")
                 continue
             continue
 
-        # if choice == 'Video':
-        #     # call browsing history function
-        #     print('this will show you all video in the browse')
-        #     video.get_video()
-        #     continue
-
         if choice == 'Exit':
-            # call browsing history function
             print("bye bye ")
             sys.exit(0)
 
