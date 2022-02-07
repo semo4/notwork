@@ -14,6 +14,6 @@ class Memory:
         mem_dir = os.path.realpath('.') + "\\memory\\"
         print(mem_dir)
         # setting up variables to run winpemem with different parameters
-        mem_acq_get = mem_dir + "winpmem_mini_x64_rc2.exe " + mem_dir + "\\memdump.raw"
+        mem_acq_get ="winpmem_mini_x64_rc2.exe " + mem_dir + "\\memdump.raw"
         # executing winpmem
         subprocess.call(mem_acq_get, stderr=self.noError)

@@ -10,18 +10,10 @@ class DomainHelper:
 
     def get_filter_domain(self, domain, index, file_name=None):
         if domain != 'all':
-            if os.path.exists(f'browser/history/{file_name}'):
-                return f'python infornito.py history --profile {index} --filter domain={domain} --export csv --to browser/history/{file_name}'
-            else:
-                os.makedirs(f'browser/history/{file_name}')
-                return f'python infornito.py history --profile {index} --filter domain={domain} --export csv --to browser/history/{file_name}'
+            return f'python infornito.py history --profile {index} --filter domain={domain} --export csv --to browser/history/{file_name}'
 
         else:
-            if os.path.exists(f'browser/history/{file_name}'):
-                return f'python infornito.py history --profile {index} --filter --export csv --to browser/history/{file_name}'
-            else:
-                os.makedirs(f'browser/history/{file_name}')
-                return f'python infornito.py history --profile {index} --filter --export csv --to browser/history/{file_name}'
+            return f'python infornito.py history --profile {index} --filter --export csv --to browser/history/{file_name}'
 
     def get_profiles(self):
         profiles = \

@@ -9,9 +9,15 @@ class SearchWord:
         result = run(run_commend, stdout=PIPE, stderr=PIPE, universal_newlines=True)
         # subprocess.call(run_commend, stderr=noError)
         if result:
-            with open("memory/keyfinds/word_search.txt", 'w') as file:
-                file.write(result.stdout)
-            return True
+            if os.path.exists('memory/keyfinds'):
+                with open("memory/keyfinds/word_search.txt", 'w') as file:
+                    file.write(result.stdout)
+                return True
+            else:
+                os.makedirs('memory/keyfinds')
+                with open("memory/keyfinds/word_search.txt", 'w') as file:
+                    file.write(result.stdout)
+                return True
         return False
 
     def read_data(self, word):

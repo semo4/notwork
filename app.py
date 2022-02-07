@@ -6,6 +6,7 @@ from handler.helper import DomainHelper
 from handler.password import Password
 from handler.search_word import SearchWord
 from handler.date import DateHelper
+from handler.create_folders import CreateFolder
 import os
 import sys
 import keyboard
@@ -21,9 +22,11 @@ def main():
     password: Password = Password()
     search: SearchWord = SearchWord()
     consumed: DateHelper = DateHelper()
+    create: CreateFolder = CreateFolder()
     sys.stdout.flush()
     os.system('color 0A')
     display_once = False
+    create.create_browser()
     while True:
         clear_console.clearConsole()
         os.system('color 0A')
@@ -41,8 +44,9 @@ def main():
                 print("here we show you the cached images ")
                 memory.mem_scrape()
                 consumed_time = consumed.consumed_time(start_time)
-                print(f"Memory Artifacts/Memory Acquisition finished Successfully, Total time execution {consumed_time}")
-                print('space was pressed, continuing...')
+                print(
+                    f"Memory Artifacts/Memory Acquisition finished Successfully, Total time execution {consumed_time}")
+                print('press space to continue ...')
                 keyboard.wait('space')
 
             if memory_sub_choice == 'Memory Key Finds':
@@ -56,7 +60,7 @@ def main():
                 consumed_time = consumed.consumed_time(start_time)
                 print(
                     f"Memory Artifacts/Memory Key Finds :: finished Successfully, Total time execution {consumed_time}")
-                print('space was pressed, continuing...')
+                print('press space to continue ...')
                 keyboard.wait('space')
             if memory_sub_choice == 'Back':
                 print("bye bye ")
@@ -73,41 +77,45 @@ def main():
                 start_time = time.time()
                 domain = choices.social_media_domain()
                 if domain == 'facebook':
-                    filter_domain = helper.get_filter_domain('facebook.com', profile_index + 1, 'facebook')
+                    filter_domain = helper.get_filter_domain(
+                        'facebook.com', profile_index + 1, 'facebook')
                     print("here we show you the results of the facebook")
                     helper.call_process(filter_domain)
                     consumed_time = consumed.consumed_time(start_time)
                     print(
                         f"Browser Artifacts/history/facebook :: finished Successfully, Total time execution {consumed_time}")
-                    print('space was pressed, continuing...')
+                    print('press space to continue ...')
                     keyboard.wait('space')
                 if domain == 'twitter':
-                    filter_domain = helper.get_filter_domain('twitter.com', profile_index + 1, 'twitter')
+                    filter_domain = helper.get_filter_domain(
+                        'twitter.com', profile_index + 1, 'twitter')
                     print("here we show you the twitter ")
                     helper.call_process(filter_domain)
                     consumed_time = consumed.consumed_time(start_time)
                     print(
                         f"Browser Artifacts/history/twitter :: finished Successfully, Total time execution {consumed_time}")
-                    print('space was pressed, continuing...')
+                    print('press space to continue ...')
                     keyboard.wait('space')
                 if domain == 'tiktok':
-                    filter_domain = helper.get_filter_domain('tiktok.com', profile_index + 1, 'tiktok')
+                    filter_domain = helper.get_filter_domain(
+                        'tiktok.com', profile_index + 1, 'tiktok')
                     print("here we show you the tiktok ")
                     helper.call_process(filter_domain)
                     consumed_time = consumed.consumed_time(start_time)
                     print(
                         f"Browser Artifacts/history/tiktok :: finished Successfully, Total time execution {consumed_time}")
-                    print('space was pressed, continuing...')
+                    print('press space to continue ...')
                     keyboard.wait('space')
                 if domain == 'all':
-                    filter_domain = helper.get_filter_domain('all', profile_index + 1)
+                    filter_domain = helper.get_filter_domain(
+                        'all', profile_index + 1)
                     print("here we show you the all domains")
                     helper.call_process(filter_domain)
                     consumed_time = consumed.consumed_time(start_time)
                     print(
 
                         f"Browser Artifacts/history/all :: finished Successfully, Total time execution {consumed_time}")
-                    print('space was pressed, continuing...')
+                    print('press space to continue ...')
                     keyboard.wait('space')
                 if sub_choice == 'Back':
                     print("bye bye ")
@@ -120,7 +128,7 @@ def main():
                 consumed_time = consumed.consumed_time(start_time)
                 print(
                     f"Browser Artifacts/downloads :: finished Successfully, Total time execution {consumed_time}")
-                print('space was pressed, continuing...')
+                print('press space to continue ...')
                 keyboard.wait('space')
             if sub_choice == 'fingerprint':
                 start_time = time.time()
@@ -130,16 +138,18 @@ def main():
                 consumed_time = consumed.consumed_time(start_time)
                 print(
                     f"Browser Artifacts/fingerprint :: finished Successfully, Total time execution {consumed_time}")
-                print('space was pressed, continuing...')
+                print('press space to continue ...')
                 keyboard.wait('space')
             if sub_choice == 'login data':
                 start_time = time.time()
                 print("here we show you the results of the passwords")
-                password.main(f'Profile {profile_index + 1}')
+                print(
+                    f'profile_choice {profile_choice} :: profile_index {profile_index}')
+                password.main(f'Profile {profile_choice}')
                 consumed_time = consumed.consumed_time(start_time)
                 print(
                     f"Browser Artifacts/Login Data :: finished Successfully, Total time execution {consumed_time}")
-                print('space was pressed, continuing...')
+                print('press space to continue ...')
                 keyboard.wait('space')
                 clear_console.yesno()
             if sub_choice == 'Back':
