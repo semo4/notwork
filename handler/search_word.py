@@ -16,7 +16,7 @@ class SearchWord:
         run_commend = f'python -m searchbin -t "{word}" memory/memdump.raw'
         result = run(run_commend, stdout=PIPE, stderr=PIPE, universal_newlines=True)
         # subprocess.call(run_commend, stderr=noError)
-        if result:
+        if result.stdout:
             if os.path.exists('memory/keyfinds'):
                 with open("memory/keyfinds/word_search.txt", 'w') as file:
                     file.write(result.stdout)
