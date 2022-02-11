@@ -45,7 +45,6 @@ except:  # Python 2 modifications.
     STDIN = sys.stdin
 
 
-
 def _exit_error(code, option="", err=None):
     """
     Error information is kept here for the purposes of easier management and possibly language tranlation.
@@ -80,7 +79,8 @@ def _exit_error(code, option="", err=None):
     if not DEBUG:
         sys.stderr.write("version: %s\n" % VERSION)
         sys.stderr.write("Please Report issues to: %s\n" % CONTACT)
-        if err: sys.stderr.write("%s\n" % str(err))
+        if err:
+            sys.stderr.write("%s\n" % str(err))
     sys.stderr.write("Error <%s>: %s\n\n" % (code, error_codes[code]))
     if __name__ == "__main__":
         sys.exit(128)  # Exit under normal operation.
@@ -112,11 +112,14 @@ def get_args():
         args = s.split(':')
 
         value = args.pop(2)  # Pop item at index 2 (argument type).
-        if value: kwargs['type'] = eval(value)  # (type)(value) # str(value) or long(value).
+        if value:
+            kwargs['type'] = eval(value)  # (type)(value) # str(value) or long(value).
         value = args.pop(2)  # Pop item at index 2 (argument metavar).
-        if value: kwargs['metavar'] = value
+        if value:
+            kwargs['metavar'] = value
         value = args.pop(2)  # Pop item at index 2 (argument name/destination).
-        if value: kwargs['dest'] = value
+        if value:
+            kwargs['dest'] = value
 
         p.add_argument(*args, **kwargs)
 
@@ -401,6 +404,8 @@ def _search_loop(start, end, bsize, pattern, max_matches,
 
 
 def main():
+    """[it will run all function and got data from it]
+    """
     args = get_args()  # Get commandline arguments.
     args = verify_args(args)  # Check arguments for sanity, and edit them a bit.
     if args.fsearch:  # If filenames were given on the commandline, process them.

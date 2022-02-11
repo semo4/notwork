@@ -8,7 +8,8 @@ class BrowserHistory:
         self.buv_run = '\BrowsingHistoryView.exe'
 
     def get_browser_history(self):
-        """Collect the browser history"""
+        """[Collect the browser history]
+        """
         print("[+] Getting User Browsing History\n", flush=True)
         bhv_exe_path = os.path.realpath('.') + self.buv_run
         bhv_param = " /SaveDirect /sort 3 /VisitTimeFilterType 1 /cfg " + "BrowsingHistoryView.cfg /scomma " + os.path.realpath(
@@ -28,7 +29,7 @@ class BrowserHistory:
     #     subprocess.call(bhv_run, stderr=self.noError)
 
     def password(self):
-        """Collect Passwords"""
+        """[Collect Passwords from saved chrome files]"""
         print("[+] Getting Passwords\n", flush=True)
         execute = "py.exe" + " .\password.py"
         subprocess.call(execute, stderr=self.noError)

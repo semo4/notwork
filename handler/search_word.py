@@ -5,6 +5,14 @@ import os
 
 class SearchWord:
     def main(self, word):
+        """[it take word to search for in memroy dump we created and store the result in file]
+
+        Args:
+            word ([String]): [the word we need to search for]
+
+        Returns:
+            [Boolean]: [it will return True if there was a result from search or False it there was no result from search]
+        """
         run_commend = f'python -m searchbin -t "{word}" memory/memdump.raw'
         result = run(run_commend, stdout=PIPE, stderr=PIPE, universal_newlines=True)
         # subprocess.call(run_commend, stderr=noError)
@@ -21,6 +29,11 @@ class SearchWord:
         return False
 
     def read_data(self, word):
+        """[it will read the file we created from above function and extract the data that match the word we search for]
+
+        Args:
+            word ([String]): [the word we need to search for in side the file we created]
+        """
         noError = open(os.devnull, 'w')
         offset_list = list()
         file = open('../memory/keyfinds/word_search.txt', 'r')

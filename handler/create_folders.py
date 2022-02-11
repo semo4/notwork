@@ -1,10 +1,14 @@
 import os
 
+
 class CreateFolder:
     def create_browser(self):
+        """[it generate the folder that will contains the files it those folders not exists ]
+        """
         if all([os.path.exists('browser'),
-        os.path.exists('browser/downloads'), os.path.exists('browser/fingerprint'),
-        os.path.exists('browser/history'), os.path.exists('browser/login_data')]) :
+                os.path.exists(
+                    'browser/downloads'), os.path.exists('browser/fingerprint'),
+                os.path.exists('browser/history'), os.path.exists('browser/login_data')]):
             pass
         else:
             os.makedirs('browser')

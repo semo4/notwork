@@ -55,11 +55,15 @@ def _urldecode(string):
     return urllib.parse.unquote(string)
 
 
-def _urlencode(string):
-    return urllib.parse.quote(string)
-
-
 def profile_info(profile_id=None):
+    """[it take profile id to get specific profile if not exist it will got all profiles in Device]
+
+    Args:
+        profile_id ([type], optional): [description]. Defaults to None.
+
+    Returns:
+        [list]: [it will return list of profiles]
+    """
     browsers_profiles_data = []
     for browser_name, browser_module in browser_modules.items():
         if browser_name == 'safari' and platform.system().lower() != 'darwin':
@@ -80,6 +84,14 @@ def profile_info(profile_id=None):
 
 
 def parse_filters(filter_list):
+    """[will remove = from list items and return just the filter that we can work with]
+
+    Args:
+        filter_list ([list]): [filter list that we need to extract filters from]
+
+    Returns:
+        [List]: [the new filter list after we extract it]
+    """
     if filter_list:
         filters = {}
         for filter_item in filter_list:
@@ -94,11 +106,17 @@ def parse_filters(filter_list):
 
 
 def arg_fingerprint(args):
+    """[it will got the fingerprint from device]
+
+    Args:
+        args ([list]): [list of argo that contains the profiles number]
+    """
     profile_information = profile_info(int(args.profile[0]))
     browser_type = profile_information['browser']
 
     print('[~] Profile path : {}\n'.format(profile_information['path']))
-    fingerprint_files = browser_modules[browser_type].fingerprint(profile_information['path'])
+    fingerprint_files = browser_modules[browser_type].fingerprint(
+        profile_information['path'])
     for filename, fingerprints in fingerprint_files.items():
         print('[+] ' + filename)
         for algorithm, fingerprint in fingerprints.items():
@@ -106,12 +124,18 @@ def arg_fingerprint(args):
 
 
 def export_profile(profile_id):
+    """[it will extract the user profile from device and create file with it's name if not exist]
+
+    Args:
+        profile_id ([int]): [the id of profile that we need to extract data for]
+    """
     profile_information = profile_info(profile_id)
     export_path = args.to[0]
     current_time = datetime.utcnow().strftime('%Y-%m-%d %H-%M-%S')
     final_path = os.path.join(export_path, profile_information['browser'].capitalize(), profile_information['name'],
                               current_time)
-    browser_files = browser_modules[profile_information['browser']].config['files']
+    browser_files = browser_modules[profile_information['browser']
+                                    ].config['files']
     # Create folder with profile name if not exist
     if not os.path.exists(final_path):
         os.makedirs(final_path)
@@ -125,7 +149,8 @@ def export_profile(profile_id):
     for (name, filename) in browser_files.items():
         print('\t[+] Exporting {} : '.format(filename), end='')
         try:
-            copyfile(os.path.join(profile_information['path'], filename), os.path.join(final_path, filename))
+            copyfile(os.path.join(profile_information['path'], filename), os.path.join(
+                final_path, filename))
             print('Successful')
         except Exception as e:
             print('Failed' + str(e))
@@ -149,6 +174,11 @@ def export_profile(profile_id):
 
 
 def arg_export(args):
+    """[take list of args and export the profile form it]
+
+    Args:
+        args ([list]): [description]
+    """
     # Export all profiles if profile id not mentioned
     if args.profile == None:
         profiles = profile_info()
@@ -159,12 +189,27 @@ def arg_export(args):
 
 
 def get_history(profile_id, filters={}):
+    """[get the chrome history]
+
+    Args:
+        profile_id ([int]): [the profile id that we need to get the histpry for]
+        filters (dict, optional): [the filter that we need to get histry by]. Defaults to {}.
+
+    Returns:
+        [list]: [it will return the history result ]
+    """
     profile_information = profile_info(profile_id)
-    history = browser_modules[profile_information['browser']].history(profile_information['path'], filters)
+    history = browser_modules[profile_information['browser']].history(
+        profile_information['path'], filters)
     return history
 
 
 def arg_history(args):
+    """[it collect the histpry from the browser with all args]
+
+    Args:
+        args ([list]): [list of args that will use to got the history result]
+    """
     query_filters = parse_filters(args.filter)
     history = []
     if args.profile == None:
@@ -173,11 +218,13 @@ def arg_history(args):
         for profile_id in range(1, len(profiles) + 1):
             history_response = get_history(profile_id, filters=query_filters)
             if not history_response['status']:
-                print('[-] Profile #{} : {}'.format(profile_id, history_response['data']))
+                print('[-] Profile #{} : {}'.format(profile_id,
+                      history_response['data']))
             else:
                 history += history_response['data']
     else:
-        history_response = get_history(str(args.profile[0]), filters=query_filters)
+        history_response = get_history(
+            str(args.profile[0]), filters=query_filters)
         if not history_response['status']:
             print('[-] {}'.format(history_response['data']))
             exit()
@@ -193,56 +240,74 @@ def arg_history(args):
 
         if query_filters.get('ip'):
             if query_filters.get('ip') == True:
-                history = [item for item in history if filterer.ip_equal(item['url'])]
+                history = [
+                    item for item in history if filterer.ip_equal(item['url'])]
             elif query_filters.get('ip') == 'lan':
-                history = [item for item in history if filterer.ip_equal(item['url'], 'lan')]
+                history = [item for item in history if filterer.ip_equal(
+                    item['url'], 'lan')]
             else:
-                history = [item for item in history if filterer.ip_equal(item['url'], query_filters.get('ip'))]
+                history = [item for item in history if filterer.ip_equal(
+                    item['url'], query_filters.get('ip'))]
 
         if query_filters.get('tld'):
-            history = [item for item in history if filterer.tld_equal(item['url'], query_filters.get('tld'))]
+            history = [item for item in history if filterer.tld_equal(
+                item['url'], query_filters.get('tld'))]
 
         if query_filters.get('regex'):
-            history = [item for item in history if re.search(query_filters.get('regex'), item['url'])]
+            history = [item for item in history if re.search(
+                query_filters.get('regex'), item['url'])]
 
         if query_filters.get('domain'):
-            history = [item for item in history if filterer.domain_equal(item['url'], query_filters.get('domain'))]
+            history = [item for item in history if filterer.domain_equal(
+                item['url'], query_filters.get('domain'))]
 
         if query_filters.get('protocol'):
-            history = [item for item in history if filterer.protocol_equal(item['url'], query_filters.get('protocol'))]
+            history = [item for item in history if filterer.protocol_equal(
+                item['url'], query_filters.get('protocol'))]
 
         if query_filters.get('filetype'):
-            history = [item for item in history if filterer.filetype_equal(item['url'], query_filters.get('filetype'))]
+            history = [item for item in history if filterer.filetype_equal(
+                item['url'], query_filters.get('filetype'))]
 
         if query_filters.get('port'):
-            history = [item for item in history if filterer.port_equal(item['url'], query_filters.get('port'))]
+            history = [item for item in history if filterer.port_equal(
+                item['url'], query_filters.get('port'))]
 
         if query_filters.get('wordpress') == True:
-            history = [item for item in history if filterer.is_wordpress(item['url'])]
+            history = [
+                item for item in history if filterer.is_wordpress(item['url'])]
 
         if query_filters.get('adminpanel') == True:
-            history = [item for item in history if filterer.is_adminpanel(item['url'])]
+            history = [
+                item for item in history if filterer.is_adminpanel(item['url'])]
 
         if query_filters.get('localfile') == True:
-            history = [item for item in history if filterer.is_localfile(item['url'])]
+            history = [
+                item for item in history if filterer.is_localfile(item['url'])]
 
         if query_filters.get('xss') == True:
-            history = [item for item in history if filterer.is_xss_attack(item['url'])]
+            history = [
+                item for item in history if filterer.is_xss_attack(item['url'])]
 
         if query_filters.get('sqli') == True:
-            history = [item for item in history if filterer.is_sqli_attack(item['url'])]
+            history = [
+                item for item in history if filterer.is_sqli_attack(item['url'])]
 
         if query_filters.get('lfi') == True:
-            history = [item for item in history if filterer.is_lfi_attack(item['url'])]
+            history = [
+                item for item in history if filterer.is_lfi_attack(item['url'])]
 
         if query_filters.get('social') == True:
-            history = [item for item in history if filterer.is_social(item['url'])]
+            history = [
+                item for item in history if filterer.is_social(item['url'])]
 
         if query_filters.get('technical') == True:
-            history = [item for item in history if filterer.is_technical(item['url'])]
+            history = [
+                item for item in history if filterer.is_technical(item['url'])]
 
         if query_filters.get('storage') == True:
-            history = [item for item in history if filterer.is_storage(item['url'])]
+            history = [
+                item for item in history if filterer.is_storage(item['url'])]
 
     if args.export != None:
 
@@ -263,16 +328,19 @@ def arg_history(args):
                     os.makedirs(templates_path)
 
                 if not os.path.exists(os.path.join(templates_path, 'html')):
-                    print('[!] html template not found, trying to download template ...')
+                    print(
+                        '[!] html template not found, trying to download template ...')
                     html_template_url = 'https://github.com/globecyber/InfornitoExportTemplates/raw/master/html.zip'
-                    local_html_template_path = os.path.join(templates_path, 'html.zip')
+                    local_html_template_path = os.path.join(
+                        templates_path, 'html.zip')
                     try:
                         if not os.path.exists(local_html_template_path):
                             # Download template
                             with urllib.request.urlopen(html_template_url) as response, open(local_html_template_path,
                                                                                              'wb') as out_file:
                                 copyfileobj(response, out_file)
-                            print('\t[+] html template downloaded successfully.')
+                            print(
+                                '\t[+] html template downloaded successfully.')
                         print('\t[~] extracting template ...')
                         # Extract Template
                         zip = zipfile.ZipFile((local_html_template_path))
@@ -296,8 +364,10 @@ def arg_history(args):
                             item['last_visit']]
                     output_list.append(temp)
 
-                output_html = output_template.replace('%OUTPUT_DATA%', json.dumps(output_list))
-                output_html = output_html.replace('%COMMAND%', ' '.join(sys.argv))
+                output_html = output_template.replace(
+                    '%OUTPUT_DATA%', json.dumps(output_list))
+                output_html = output_html.replace(
+                    '%COMMAND%', ' '.join(sys.argv))
 
                 # Copy template to destination
                 copyDirectory(os.path.join(templates_path, 'html'), final_path)
@@ -305,7 +375,8 @@ def arg_history(args):
                 for item in glob.glob(os.path.join(final_path, "*.template.html")):
                     os.remove(item)
                 # Save output
-                output_file = open(os.path.join(final_path, 'history.html'), "w")
+                output_file = open(os.path.join(
+                    final_path, 'history.html'), "w")
                 output_file.write(output_html)
                 output_file.close()
                 print('\t[+] Done.')
@@ -314,12 +385,15 @@ def arg_history(args):
         else:
             try:
                 if args.profile != None:
-                    output_filename = 'infornito_profile_{}_{}.csv'.format(str(args.profile[0]), current_time)
+                    output_filename = 'infornito_profile_{}_{}.csv'.format(
+                        str(args.profile[0]), current_time)
                 else:
-                    output_filename = 'infornito_profiles_{}.csv'.format(current_time)
+                    output_filename = 'infornito_profiles_{}.csv'.format(
+                        current_time)
 
                 final_path = os.path.join(args.to[0])
-                export_csv(final_path, output_filename, ['url', 'title', 'last_visit', 'count'], history)
+                export_csv(final_path, output_filename, [
+                           'url', 'title', 'last_visit', 'count'], history)
                 print('\t[+] Done')
             except Exception as e:
                 print('\t[-]' + str(e))
@@ -329,7 +403,8 @@ def arg_history(args):
         try:
             for item in history:
                 if item.get('last_visit'):
-                    print('[{}] {} ( {} )'.format(item['count'], item['url'], item['last_visit']))
+                    print('[{}] {} ( {} )'.format(
+                        item['count'], item['url'], item['last_visit']))
                 else:
                     print('[{}] {}'.format(item['count'], item['url']))
             print('\n[Total visit] URL ( Last Visit )')
@@ -340,6 +415,11 @@ def arg_history(args):
 
 
 def arg_profiles(args):
+    """[it will print profiles info that will got from Device]
+
+    Args:
+        args ([list]): [the args will got the profiles]
+    """
     print('[~] Profiles :\n')
     browser_profile_list = []
     try:
@@ -348,7 +428,8 @@ def arg_profiles(args):
         profiles = profile_info()
 
     if args.id:
-        browser_profile_list.append([args.id[0], profiles['name'], profiles['browser'].capitalize()])
+        browser_profile_list.append(
+            [args.id[0], profiles['name'], profiles['browser'].capitalize()])
     else:
         for (key, profile_information) in enumerate(profiles):
             browser_profile_list.append(
@@ -358,32 +439,43 @@ def arg_profiles(args):
         print('\t{} => {} ({})'.format(profile[0], profile[2], profile[1]))
 
 
-
 def arg_downloads(args):
+    """[collect args for download files]
+
+    Args:
+        args ([list]): [the args will got the download attributes]
+    """
     query_filters = parse_filters(args.filter)
 
     profile_information = profile_info(int(args.profile[0]))
     browser_type = profile_information['browser']
-    downloads = browser_modules[browser_type].downloads(profile_information['path'])
+    downloads = browser_modules[browser_type].downloads(
+        profile_information['path'])
 
     # Filter Output
     if query_filters != None:
         if query_filters.get('ip'):
             if query_filters.get('ip') == True:
-                downloads = [item for item in downloads if filterer.ip_equal(item['url'])]
+                downloads = [
+                    item for item in downloads if filterer.ip_equal(item['url'])]
             elif query_filters.get('ip') == 'lan':
-                downloads = [item for item in downloads if filterer.ip_equal(item['url'], 'lan')]
+                downloads = [item for item in downloads if filterer.ip_equal(
+                    item['url'], 'lan')]
             else:
-                downloads = [item for item in downloads if filterer.ip_equal(item['url'], query_filters.get('ip'))]
+                downloads = [item for item in downloads if filterer.ip_equal(
+                    item['url'], query_filters.get('ip'))]
 
         if query_filters.get('tld'):
-            downloads = [item for item in downloads if filterer.tld_equal(item['url'], query_filters.get('tld'))]
+            downloads = [item for item in downloads if filterer.tld_equal(
+                item['url'], query_filters.get('tld'))]
 
         if query_filters.get('regex'):
-            downloads = [item for item in downloads if re.search(query_filters.get('regex'), item['url'])]
+            downloads = [item for item in downloads if re.search(
+                query_filters.get('regex'), item['url'])]
 
         if query_filters.get('domain'):
-            downloads = [item for item in downloads if filterer.domain_equal(item['url'], query_filters.get('domain'))]
+            downloads = [item for item in downloads if filterer.domain_equal(
+                item['url'], query_filters.get('domain'))]
 
         if query_filters.get('protocol'):
             downloads = [item for item in downloads if
@@ -394,17 +486,20 @@ def arg_downloads(args):
                          filterer.filetype_equal(item['url'], query_filters.get('filetype'))]
 
         if query_filters.get('port'):
-            downloads = [item for item in downloads if filterer.port_equal(item['url'], query_filters.get('port'))]
+            downloads = [item for item in downloads if filterer.port_equal(
+                item['url'], query_filters.get('port'))]
 
         if query_filters.get('localfile') == True:
-            downloads = [item for item in downloads if filterer.is_localfile(item['url'])]
+            downloads = [
+                item for item in downloads if filterer.is_localfile(item['url'])]
 
     for item in downloads:
         status = '+'
         if not item['is_fully_download']:
             status = '-'
 
-        print('[{}] {} -> {} ( {} )'.format(status, item['url'], item['saved_in'], item['start_downloading_at']))
+        print('[{}] {} -> {} ( {} )'.format(status, item['url'],
+              item['saved_in'], item['start_downloading_at']))
     print('\n----------------- Summary ----------------')
     print('[#] Total downloads : {}'.format(len(downloads)))
 
@@ -414,16 +509,19 @@ parser.add_argument('-v', '--version', action='version',
                     version='[+] infornito current version is {}.'.format(str(__version__)))
 subparsers = parser.add_subparsers()
 
-profiles = subparsers.add_parser('profiles', description='List browsers profiles')
+profiles = subparsers.add_parser(
+    'profiles', description='List browsers profiles')
 profiles.add_argument('--id', nargs=1, help='Select profile id')
 profiles.set_defaults(func=arg_profiles)
 
 history = subparsers.add_parser('history')
 history.add_argument('--profile', nargs=1, help='select profile id')
 history.add_argument('--filter', action='append', help='add filter')
-history.add_argument('--urldecode', action='store_true', help='url decode hisotries')
+history.add_argument('--urldecode', action='store_true',
+                     help='url decode hisotries')
 history.add_argument('--export', nargs=1, help='export output to csv file')
-history.add_argument('--to', nargs=1, default=['export'], help='destination path for export profile history')
+history.add_argument(
+    '--to', nargs=1, default=['export'], help='destination path for export profile history')
 history.set_defaults(func=arg_history)
 
 fingerprint = subparsers.add_parser('fingerprint')
@@ -437,7 +535,8 @@ downloads.set_defaults(func=arg_downloads)
 
 export = subparsers.add_parser('export')
 export.add_argument('--profile', nargs=1, help='Select profile id')
-export.add_argument('--to', nargs=1, default=['export'], help='Destination path for export profile')
+export.add_argument(
+    '--to', nargs=1, default=['export'], help='Destination path for export profile')
 export.set_defaults(func=arg_export)
 
 args = parser.parse_args()
