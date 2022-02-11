@@ -145,13 +145,13 @@ def main():
                 print("here we show you the results of the passwords")
                 print(
                     f'profile_choice {profile_choice} :: profile_index {profile_index}')
-                password.main(f'Profile {profile_choice}')
+                search = profile_choice.split(' ')[-1]
+                password.main(f'Profile {search}')
                 consumed_time = consumed.consumed_time(start_time)
                 print(
                     f"Browser Artifacts/Login Data :: finished Successfully, Total time execution {consumed_time}")
                 print('press space to continue ...')
                 keyboard.wait('space')
-                clear_console.yesno()
             if sub_choice == 'Back':
                 print("bye bye ")
                 continue
